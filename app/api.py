@@ -42,7 +42,23 @@ print(f"Loaded model from {model_vit_path}")
 
 model = CNNBinaryClassifier(model_type='resnet18', pretrained=False).to(device)
 
-
+@app.on_event("startup")
+def warmup_model():
+    import numpy as np
+    # Tạo ảnh giả để warm up
+    dummy_img = np.zeros((640, 640, 3), dtype=np.uint8)
+    predict(
+            image=dummy_img,
+            model_path=model_path,
+            model=model,
+            device=device
+        )
+    predict_and_visualize_gradcam(
+            image=dummy_img,
+            model=model_vit,
+            device=device
+        )
+    print("Model warmup done!")
 
 @app.get('/')
 def home():
