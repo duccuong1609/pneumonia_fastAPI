@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "app/api.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb" }
+    },
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/model/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=86400, immutable"
+      },
+      "dest": "/public/model/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app/api.py"
+    }
+  ]
+}
